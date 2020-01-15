@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'cgpa_calculator.dart';
 
 List lst = [1];
+CgpaCalculator cgpaCalculator;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -8,12 +10,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+ 
   @override
   Widget build(BuildContext context) {
+     cgpaCalculator=CgpaCalculator();
     return Scaffold(
       floatingActionButton: RaisedButton(
         child: Text('Calculate CGPA'),
-        onPressed: () {},
+        onPressed: () {
+          print(cgpaCalculator.calCulateCredit());
+        },
       ),
       body: SafeArea(
         child: Column(
@@ -74,9 +80,16 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
   final _formkey = GlobalKey<FormState>();
+  TextEditingController courseController=TextEditingController();
+  TextEditingController creditController=TextEditingController();
+  TextEditingController cgpaController=TextEditingController();
+  Controllers controllers;
+
 
   @override
   Widget build(BuildContext context) {
+    controllers=new Controllers(courseController, creditController, cgpaController);
+    cgpaCalculator.add(controllers);
     return Form(
       child: Row(
         key: _formkey,
@@ -84,6 +97,7 @@ class _DetailsState extends State<Details> {
           Flexible(
             child: TextFormField(
               decoration: InputDecoration(hintText: 'COURSE'),
+              controller: courseController,
             ),
           ),
           SizedBox(
@@ -92,6 +106,7 @@ class _DetailsState extends State<Details> {
           Flexible(
             child: TextFormField(
               decoration: InputDecoration(hintText: 'Credits'),
+              controller: creditController,
               validator: (v) {
                 if (v.isEmpty) {
                   return 'Please Enter Credits';
@@ -109,6 +124,7 @@ class _DetailsState extends State<Details> {
           Flexible(
             child: TextFormField(
               decoration: InputDecoration(hintText: 'CGPA'),
+              controller: cgpaController,
             ),
           ),
           SizedBox(
@@ -119,11 +135,24 @@ class _DetailsState extends State<Details> {
             onPressed: () {
               setState(() {
                 lst.removeAt(widget.i);
+                cgpaCalculator.remove(widget.i);
               });
             },
           )
         ],
       ),
     );
+  }
+
+ @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+
+    cgpaController.dispose();
+    creditController.dispose();
+    courseController.dispose();
+   
+    super.dispose();
   }
 }
