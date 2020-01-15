@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'myhomepage.dart';
 
 class CgpaCalculator{
   final list=new List<Controllers>();
@@ -29,8 +30,6 @@ return this.list.length;
  
 
 
-
-
 }
 
 class Controllers{
@@ -42,4 +41,23 @@ class Controllers{
 
   }
 
+}
+
+class CgpaListItem{
+  List<Widget> list=new List<Widget>();
+  CgpaCalculator(){
+
+
+  }
+ void add(Widget widget){
+   this.list.add(widget);
+
+ }
+ void remove(int index){
+   this.list.removeAt(index);
+
+ }
+  int length(){
+    return this.list.length;
+  }
 }
