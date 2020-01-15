@@ -1,8 +1,12 @@
+
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'cgpa_calculator.dart';
-
+CgpaListItem cgpaListItem;
 List lst = [1];
 CgpaCalculator cgpaCalculator;
+//List<Widget> itemsList=new List<Widget>();
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -10,14 +14,50 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var credit;
+  int index;
+
+   List<Widget> itemsList=new List<Widget>();
+  String cgpa;
+  void changeState(){
+    setState(() {
+
+    });
+  }
+@override
+  void initState() {
+    // TODO: implement initState
+  cgpaCalculator=CgpaCalculator();
+  cgpaListItem=CgpaListItem();
+  cgpaListItem.add(Details(0,this));
+  index=1;
+    super.initState();
+  }
+
+  void setCgpaAndCredit(_credit,String _cgpa){
+    
+    setState(() {
+      credit=_credit;
+      cgpa=_cgpa;
+
+    });
+
+  }
  
   @override
   Widget build(BuildContext context) {
-     cgpaCalculator=CgpaCalculator();
+
+
+
+  final me=this;
+
+
     return Scaffold(
       floatingActionButton: RaisedButton(
         child: Text('Calculate CGPA'),
         onPressed: () {
+          final _credit=cgpaCalculator.calCulateCredit();
+          setCgpaAndCredit(_credit,"CGPA");
           print(cgpaCalculator.calCulateCredit());
         },
       ),
@@ -31,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   radius: 50,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Text('0.00'), Text('CGPA')],
+                    children: <Widget>[Text(credit!=null?credit.toString():"4.0"), Text(cgpa!=null?cgpa.toString():"CGPA")],
                   ),
                 ),
                 SizedBox(
@@ -41,26 +81,34 @@ class _MyHomePageState extends State<MyHomePage> {
                   radius: 50,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Text('0.00'), Text('Credits')],
+                    children: <Widget>[Text(credit!=null?credit.toString():"4.0"), Text(cgpa!=null?cgpa.toString():"CGPA")],
                   ),
                 ),
               ],
             ),
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: lst.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Details(index);
-              },
-            ),
+
+            Container(
+              width: double.infinity,
+              height: 200,
+              child: ListView.builder(
+                itemCount: cgpaListItem.length()+1,
+                  itemBuilder:(BuildContext context, int index) {
+                  print(index);
+                    return Details(index,me);
+                  },
+              ),
+            )  ,
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                setState(() {
-                  lst.add(1);
-                });
-                print(lst.length);
+
+                  index++;
+                 cgpaListItem.add(Details(index,me));
+                 setState(() {
+
+                 });
+
+              print(cgpaListItem.length());
               },
             )
           ],
@@ -71,14 +119,25 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Details extends StatefulWidget {
-  final int i;
-  Details(this.i);
+   int i;
+   _MyHomePageState _myHomePageState;
+
+  Details(int i,_MyHomePageState _myHomePageState){
+    this.i=i;
+    this._myHomePageState=_myHomePageState;
+  }
 
   @override
-  _DetailsState createState() => _DetailsState();
+  _DetailsState createState() => _DetailsState(this._myHomePageState);
 }
 
 class _DetailsState extends State<Details> {
+  _MyHomePageState _myHomePageState;
+  _DetailsState(_MyHomePageState _myHomePageState){
+    this._myHomePageState=_myHomePageState;
+  }
+
+
   final _formkey = GlobalKey<FormState>();
   TextEditingController courseController=TextEditingController();
   TextEditingController creditController=TextEditingController();
@@ -88,6 +147,7 @@ class _DetailsState extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
+    final me=this;
     controllers=new Controllers(courseController, creditController, cgpaController);
     cgpaCalculator.add(controllers);
     return Form(
@@ -133,9 +193,15 @@ class _DetailsState extends State<Details> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
+              cgpaListItem.remove(widget.i-1);
+              this._myHomePageState.changeState();
               setState(() {
-                lst.removeAt(widget.i);
-                cgpaCalculator.remove(widget.i);
+              //  lst.removeAt(widget.i);
+               // itemsList.removeAt(widget.i+1);
+               // _myHomePageState.changeState();
+               // cgpaListItem.remove(widget.i);
+                print(widget.i);
+             //   cgpaCalculator.remove(widget.i);
               });
             },
           )
@@ -156,3 +222,6 @@ class _DetailsState extends State<Details> {
     super.dispose();
   }
 }
+
+
+
